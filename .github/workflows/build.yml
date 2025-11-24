@@ -20,38 +20,37 @@ jobs:
         with:
           fetch-depth: 0
 
-      # Set up Python
+            # Set up Python
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
           python-version: '3.12'
 
-      # Add project root and src to PYTHONPATH (fixes ModuleNotFoundError)
-      - name: Fix Python Module Path
-        run: |
-          echo "PYTHONPATH=$PYTHONPATH:$(pwd):$(pwd)/src" >> $GITHUB_ENV
-
-      # Install dependencies
-      - name: Install dependencies
+      # Install dependencies and run tests with coverage
+      - name: Install dependencies and Run Unit Tests with Coverage
         run: |
           pip install flask pytest pytest-cov
+          python -m pytest src/test_secure_example.py --cov=src --cov-report=xml:coverage.xml -v
 
      
 
-      # Build Docker Image
+
+      # Build Docker Image (no push)
       - name: Build Docker Image
         run: |
-          docker build -t chinmaiyerasi/myapp:latest .
+          docker build -t brahadees/myapp:latest .
 
-     # Install Flask and start app in background
+      # Install Flask and start app in background
       - name: Install dependencies and start Flask app
         run: |
           pip install flask
           nohup python src/main.py &  # Start Flask app in background
 
-      # Wait for Flask to start
+      # Wait for Flask API to start
       - name: Wait for Flask API
-        run: sleep 10
+        run: sleep 10  # Wait for 10 seconds for
+
+      
 
       - name: ZAP Full Scan
         uses: zaproxy/action-full-scan@v0.13.0
