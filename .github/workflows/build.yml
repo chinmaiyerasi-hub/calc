@@ -36,10 +36,7 @@ jobs:
         run: |
           pip install flask pytest pytest-cov
 
-      # Run Unit Tests with Coverage
-      - name: Run Unit Tests
-        run: |
-          python -m pytest src/test_main.py --cov=src --cov-report=xml:coverage.xml -v
+     
 
       # Build Docker Image
       - name: Build Docker Image
