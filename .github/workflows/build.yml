@@ -30,7 +30,7 @@ jobs:
       - name: Install dependencies and Run Unit Tests with Coverage
         run: |
           pip install flask pytest pytest-cov
-          python -m pytest src/test_secure_example.py --cov=src --cov-report=xml:coverage.xml -v
+          python -m pytest src/test_main.py --cov=src --cov-report=xml:coverage.xml -v
 
      
 
