@@ -1,19 +1,48 @@
 name: Build
+
 on:
   push:
     branches:
       - main
   pull_request:
     types: [opened, synchronize, reopened]
+
 jobs:
   sonarqube:
-    name: SonarQube
+    name: Unit Tests + SonarQube
     runs-on: ubuntu-latest
+
     steps:
+      # Step 1: Checkout repository
       - uses: actions/checkout@v4
         with:
-          fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis
+          fetch-depth: 0   # Required for SonarQube scan
+
+      # Step 2: Set up Python
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      # Step 3: Install dependencies
+      - name: Install Dependencies
+        run: |
+          pip install pytest flask pytest-cov
+
+      # Step 4: Run Unit Tests with Coverage
+      - name: Run Unit Tests with Coverage
+        run: |
+          # Run all tests in src/ and generate coverage.xml
+          pytest src/ --cov=src --cov-report=xml:coverage.xml
+
+      # Step 5: SonarQube Scan
       - name: SonarQube Scan
         uses: SonarSource/sonarqube-scan-action@v6
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        with:
+          args: >
+            -Dsonar.projectKey=akshitha-jpg_calc-python
+            -Dsonar.organization=akshitha-jpg
+            -Dsonar.sources=src
+            -Dsonar.python.coverage.reportPaths=coverage.xml
