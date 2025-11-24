@@ -31,7 +31,21 @@ jobs:
         run: |
           pip install flask pytest pytest-cov
           python -m pytest src/test_secure_example.py --cov=src --cov-report=xml:coverage.xml -v
-
+          
+      # SonarQube Scan
+      - name: SonarQube Scan
+        uses: SonarSource/sonarqube-scan-action@v6
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        with:
+          extra-properties: |
+            sonar.projectKey=JOSHUACRAZES_SSDLS
+            sonar.organization=joshuacrazes
+            sonar.sources=src
+            sonar.python.coverage.reportPaths=coverage.xml
+            sonar.coverage.exclusions=**/*test*.py
+            sonar.cpd.exclusions=**/*test*.py
+            sonar.verbose=true
      
 
 
