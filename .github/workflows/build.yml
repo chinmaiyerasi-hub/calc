@@ -1,29 +1,19 @@
-name: SonarCloud Scan
-
+name: Build
 on:
   push:
-    branches: [ main ]
+    branches:
+      - main
   pull_request:
-    branches: [ main ]
-
+    types: [opened, synchronize, reopened]
 jobs:
-  sonar:
-    name: SonarCloud Scan
+  sonarqube:
+    name: SonarQube
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
-      - name: Set up JDK 17
-        uses: actions/setup-java@v3
+      - uses: actions/checkout@v4
         with:
-          java-version: 17
-          distribution: 'temurin'
-
-      - name: SonarCloud Scan
+          fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis
+      - name: SonarQube Scan
         uses: SonarSource/sonarqube-scan-action@v6
-        with:
-          organization: akshitha-jpg
-          token: ${{ secrets.SONAR_TOKEN }}
-          projectKey: akshitha-jpg_calc-python
-          sources: src
-          coverageReportPaths: coverage.xml
-
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
